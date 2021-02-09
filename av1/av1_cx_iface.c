@@ -848,6 +848,7 @@ static aom_codec_err_t set_encoder_config(AV1EncoderConfig *oxcf,
   rc_cfg->vbrbias = cfg->rc_2pass_vbr_bias_pct;
   rc_cfg->vbrmin_section = cfg->rc_2pass_vbr_minsection_pct;
   rc_cfg->vbrmax_section = cfg->rc_2pass_vbr_maxsection_pct;
+  rc_cfg->adaptive_k_value = cfg->alm_k_value;
 
   // Set Toolset related configuration.
   tool_cfg->bit_depth = cfg->g_bit_depth;
@@ -3410,6 +3411,7 @@ static const aom_codec_enc_cfg_t encoder_usage_cfg[] = {
       50,    // rc_two_pass_vbrbias
       0,     // rc_two_pass_vbrmin_section
       2000,  // rc_two_pass_vbrmax_section
+      0,     // alm_k_value
 
       // keyframing settings (kf)
       0,                       // fwd_kf_enabled
@@ -3480,6 +3482,7 @@ static const aom_codec_enc_cfg_t encoder_usage_cfg[] = {
       50,    // rc_two_pass_vbrbias
       0,     // rc_two_pass_vbrmin_section
       2000,  // rc_two_pass_vbrmax_section
+      0,     // alm_k_value
 
       // keyframing settings (kf)
       0,                       // fwd_kf_enabled

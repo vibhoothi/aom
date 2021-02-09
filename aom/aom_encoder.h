@@ -731,6 +731,13 @@ typedef struct aom_codec_enc_cfg {
    */
   unsigned int rc_2pass_vbr_maxsection_pct;
 
+  /*!
+   *
+   *  This value, expressed as signed/unsigned value gives the value of K for
+   *  adaptive lagrangian multiplier experiments
+   */
+  unsigned int alm_k_value;
+
   /*
    * keyframing settings (kf)
    */

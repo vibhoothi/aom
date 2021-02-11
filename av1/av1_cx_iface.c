@@ -3411,7 +3411,7 @@ static const aom_codec_enc_cfg_t encoder_usage_cfg[] = {
       50,    // rc_two_pass_vbrbias
       0,     // rc_two_pass_vbrmin_section
       2000,  // rc_two_pass_vbrmax_section
-      0,     // alm_k_value
+      1,     // alm_k_value
 
       // keyframing settings (kf)
       0,                       // fwd_kf_enabled
@@ -3482,7 +3482,7 @@ static const aom_codec_enc_cfg_t encoder_usage_cfg[] = {
       50,    // rc_two_pass_vbrbias
       0,     // rc_two_pass_vbrmin_section
       2000,  // rc_two_pass_vbrmax_section
-      0,     // alm_k_value
+      1,     // alm_k_value
 
       // keyframing settings (kf)
       0,                       // fwd_kf_enabled

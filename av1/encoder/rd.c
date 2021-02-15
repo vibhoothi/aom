@@ -355,8 +355,11 @@ static const int rd_layer_depth_factor[7] = {
 };
 
 int av1_compute_rd_mult_based_on_qindex(const AV1_COMP *cpi, int qindex) {
+  const int alm_k = cpi->oxcf.rc_cfg.adaptive_k_value;
+  const int alm_step = cpi->oxcf.rc_cfg.adaptive_stepsize;
+  const double precise_alm_k = alm_k + alm_step * 0.25;
   const int q = av1_dc_quant_QTX(qindex, 0, cpi->common.seq_params.bit_depth);
-  int rdmult = (int)(((int64_t)88 * q * q) / 24);
+  int rdmult = (int)(((int64_t)88 * q * q * precise_alm_k) / 24);
 
   switch (cpi->common.seq_params.bit_depth) {
     case AOM_BITS_8: break;

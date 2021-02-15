@@ -529,6 +529,15 @@ typedef struct {
    * of the target bitrate.
    */
   int vbrmax_section;
+  /*!
+   * Indicates the K value to be used for adaptive Lagrangian Multiplier
+   */
+  int adaptive_k_value;
+  /*!
+   * Indicates the step size to be used for adaptive lagrangian multiplier
+   */
+  int adaptive_stepsize;
+
 } RateControlCfg;
 
 /*!\cond */

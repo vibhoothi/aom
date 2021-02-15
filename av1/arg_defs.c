@@ -257,6 +257,10 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
       ARG_DEF(NULL, "minsection-pct", 1, "GOP min bitrate (% of target)"),
   .maxsection_pct =
       ARG_DEF(NULL, "maxsection-pct", 1, "GOP max bitrate (% of target)"),
+  .alm_k =
+      ARG_DEF(NULL, "alm_k", 1, "Adaptive Lagrangian Multiplier K Value"),
+  .alm_step =
+      ARG_DEF(NULL, "alm_step", 1, "Adaptive Lagrangian Multipler Step Size"),
   .fwd_kf_enabled =
       ARG_DEF(NULL, "enable-fwd-kf", 1, "Enable forward reference keyframes"),
   .kf_min_dist =

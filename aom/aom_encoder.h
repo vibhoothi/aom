@@ -724,6 +724,20 @@ typedef struct aom_codec_enc_cfg {
    */
   unsigned int rc_2pass_vbr_maxsection_pct;
 
+  /*!\brief Adaptive Lagrangian Multiplier K value
+   *
+   *  This value, expressed as unsigned value gives the value of K for
+   *  adaptive lagrangian multiplier experiments
+   */
+  unsigned int alm_k_value;
+
+  /*!\brief Adaptive Lagrangian Multiplier Step Size
+   *
+   * This value, expressed as 1,2, 3 indicates 0.25 increment towards K
+   * new_k = k + alm_step where 1 is 0.25, 2 is 0.50, 3 is 0.75.
+   */
+  unsigned int alm_stepsize;
+
   /*
    * keyframing settings (kf)
    */

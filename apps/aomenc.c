@@ -299,6 +299,7 @@ const arg_def_t *rc_args[] = { &g_av1_codec_arg_defs.dropframe_thresh,
                                &g_av1_codec_arg_defs.minsection_pct,
                                &g_av1_codec_arg_defs.maxsection_pct,
                                &g_av1_codec_arg_defs.alm_k,
+                               &g_av1_codec_arg_defs.alm_step,
                                NULL };
 
 const arg_def_t *kf_args[] = { &g_av1_codec_arg_defs.fwd_kf_enabled,
@@ -984,8 +985,10 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
 
       if (global->passes < 2)
         warn("option %s ignored in one-pass mode.\n", arg.name);
-    } else if (arg_match(&arg, &g_av1_codec_arg_defs.alm_k, argi)){
+    } else if (arg_match(&arg, &g_av1_codec_arg_defs.alm_k, argi)) {
       config->cfg.alm_k_value = arg_parse_uint(&arg);
+    } else if (arg_match(&arg, &g_av1_codec_arg_defs.alm_step, argi)) {
+      config->cfg.alm_stepsize = arg_parse_uint(&arg);
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.fwd_kf_enabled, argi)) {
       config->cfg.fwd_kf_enabled = arg_parse_uint(&arg);
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.kf_min_dist, argi)) {
@@ -1187,6 +1190,7 @@ static void show_stream_config(struct stream_state *stream,
   SHOW(rc_2pass_vbr_minsection_pct);
   SHOW(rc_2pass_vbr_maxsection_pct);
   SHOW(alm_k_value);
+  SHOW(alm_stepsize);
   SHOW(fwd_kf_enabled);
   SHOW(kf_mode);
   SHOW(kf_min_dist);

@@ -229,6 +229,7 @@ static const int av1_arg_ctrl_map[] = { AOME_SET_CPUUSED,
 #endif
                                         AV1E_SET_DV_COST_UPD_FREQ,
                                         AV1E_SET_PARTITION_INFO_PATH,
+                                        AV1E_SET_RDMULT_INFO_FILE,
                                         0 };
 
 const arg_def_t *main_args[] = { &g_av1_codec_arg_defs.help,
@@ -426,6 +427,7 @@ const arg_def_t *av1_ctrl_args[] = {
 #endif
   &g_av1_codec_arg_defs.dv_cost_upd_freq,
   &g_av1_codec_arg_defs.partition_info_path,
+  &g_av1_codec_arg_defs.rdmult_info_file,
   NULL,
 };
 
@@ -510,6 +512,7 @@ struct stream_config {
   const char *vmaf_model_path;
 #endif
   const char *partition_info_path;
+  const char *rdmult_info_file;
   aom_color_range_t color_range;
 };
 
@@ -1081,6 +1084,8 @@ static int parse_stream_params(struct AvxEncoderConfig *global,
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.partition_info_path,
                          argi)) {
       config->partition_info_path = arg.val;
+    } else if (arg_match(&arg, &g_av1_codec_arg_defs.rdmult_info_file, argi)) {
+      config->rdmult_info_file = arg.val;
     } else if (arg_match(&arg, &g_av1_codec_arg_defs.use_fixed_qp_offsets,
                          argi)) {
       config->cfg.use_fixed_qp_offsets = arg_parse_uint(&arg);
@@ -1455,6 +1460,10 @@ static void initialize_encoder(struct stream_state *stream,
     AOM_CODEC_CONTROL_TYPECHECKED(&stream->encoder,
                                   AV1E_SET_PARTITION_INFO_PATH,
                                   stream->config.partition_info_path);
+  }
+  if (stream->config.rdmult_info_file) {
+    AOM_CODEC_CONTROL_TYPECHECKED(&stream->encoder, AV1E_SET_RDMULT_INFO_FILE,
+                                  stream->config.rdmult_info_file);
   }
 
   if (stream->config.film_grain_filename) {

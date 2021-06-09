@@ -834,6 +834,9 @@ void av1_change_config(struct AV1_COMP *cpi, const AV1EncoderConfig *oxcf,
   if (lap_lag_in_frames != -1) {
     cpi->oxcf.gf_cfg.lag_in_frames = lap_lag_in_frames;
   }
+
+  // read external lambda table
+  read_rdmult_info(cpi);
 }
 
 static INLINE void init_frame_info(FRAME_INFO *frame_info,
@@ -1425,6 +1428,8 @@ AV1_COMP *av1_create_compressor(AV1_PRIMARY *ppi, AV1EncoderConfig *oxcf,
   av1_init_quantizer(&cpi->enc_quant_dequant_params, &cm->quant_params,
                      cm->seq_params->bit_depth);
   av1_qm_init(&cm->quant_params, av1_num_planes(cm));
+
+  av1_init_rdmult(cpi);
 
   av1_loop_filter_init(cm);
   cm->superres_scale_denominator = SCALE_NUMERATOR;

@@ -376,31 +376,47 @@ static double def_kf_rd_multiplier(int qindex) {
 }
 
 int av1_compute_rd_mult_based_on_qindex(const AV1_COMP *cpi, int qindex) {
-  const int q = av1_dc_quant_QTX(qindex, 0, cpi->common.seq_params->bit_depth);
+  const AV1_COMMON *cm = &cpi->common;
   const FRAME_UPDATE_TYPE update_type =
       cpi->ppi->gf_group.update_type[cpi->gf_frame_index];
-  int rdmult = q * q;
-
+  int idx = 0;
   if (update_type == KF_UPDATE) {
-    double def_rd_q_mult = def_kf_rd_multiplier(qindex);
-    rdmult = (int)((double)rdmult * def_rd_q_mult);
+    idx = 0;
   } else if ((update_type == GF_UPDATE) || (update_type == ARF_UPDATE)) {
-    double def_rd_q_mult = def_arf_rd_multiplier(qindex);
-    rdmult = (int)((double)rdmult * def_rd_q_mult);
+    idx = 1;
   } else {
-    double def_rd_q_mult = def_inter_rd_multiplier(qindex);
-    rdmult = (int)((double)rdmult * def_rd_q_mult);
+    idx = 2;
   }
 
-  switch (cpi->common.seq_params->bit_depth) {
-    case AOM_BITS_8: break;
-    case AOM_BITS_10: rdmult = ROUND_POWER_OF_TWO(rdmult, 4); break;
-    case AOM_BITS_12: rdmult = ROUND_POWER_OF_TWO(rdmult, 8); break;
-    default:
-      assert(0 && "bit_depth should be AOM_BITS_8, AOM_BITS_10 or AOM_BITS_12");
-      return -1;
+#if !defined(NDEBUG)
+  // validate if the initialized rdmult is correct or not.
+  if (!cpi->oxcf.rdmult_info_file) {
+    const int q =
+        av1_dc_quant_QTX(qindex, 0, cpi->common.seq_params->bit_depth);
+    int rdmult = q * q;
+
+    if (update_type == KF_UPDATE) {
+      double def_rd_q_mult = def_kf_rd_multiplier(qindex);
+      rdmult = (int)((double)rdmult * def_rd_q_mult);
+    } else if ((update_type == GF_UPDATE) || (update_type == ARF_UPDATE)) {
+      double def_rd_q_mult = def_arf_rd_multiplier(qindex);
+      rdmult = (int)((double)rdmult * def_rd_q_mult);
+    } else {
+      double def_rd_q_mult = def_inter_rd_multiplier(qindex);
+      rdmult = (int)((double)rdmult * def_rd_q_mult);
+    }
+
+    switch (cpi->common.seq_params->bit_depth) {
+      case AOM_BITS_8: break;
+      case AOM_BITS_10: rdmult = ROUND_POWER_OF_TWO(rdmult, 4); break;
+      case AOM_BITS_12: rdmult = ROUND_POWER_OF_TWO(rdmult, 8); break;
+      default: assert(0 && "bit_depth should be AOM_BITS_8/10/12"); return -1;
+    }
+    rdmult = (rdmult > 0) ? rdmult : 1;
+    assert(rdmult == cm->rdmult[idx][qindex]);
   }
-  return rdmult > 0 ? rdmult : 1;
+#endif
+  return cm->rdmult[idx][qindex];
 }
 
 int av1_compute_rd_mult(const AV1_COMP *cpi, int qindex) {
@@ -419,6 +435,77 @@ int av1_compute_rd_mult(const AV1_COMP *cpi, int qindex) {
     rdmult += ((rdmult * rd_boost_factor[boost_index]) >> 7);
   }
   return (int)rdmult;
+}
+
+int av1_init_rdmult(struct AV1_COMP *cpi) {
+  AV1_COMMON *cm = &cpi->common;
+  for (int qindex = MINQ; qindex <= MAXQ; qindex++) {
+    const int q =
+        av1_dc_quant_QTX(qindex, 0, cpi->common.seq_params->bit_depth);
+    for (int i = 0; i < 3; i++) {
+      double def_rd_q_mult = 0.0;
+      switch (i) {
+        case 0: def_rd_q_mult = def_kf_rd_multiplier(qindex); break;
+        case 1: def_rd_q_mult = def_arf_rd_multiplier(qindex); break;
+        case 2: def_rd_q_mult = def_inter_rd_multiplier(qindex); break;
+      }
+      int rdmult = q * q;
+      rdmult = (int)((double)rdmult * def_rd_q_mult);
+      switch (cpi->common.seq_params->bit_depth) {
+        case AOM_BITS_8: break;
+        case AOM_BITS_10: rdmult = ROUND_POWER_OF_TWO(rdmult, 4); break;
+        case AOM_BITS_12: rdmult = ROUND_POWER_OF_TWO(rdmult, 8); break;
+        default: assert(0 && "bit_depth should be AOM_BITS_8/10/12"); return -1;
+      }
+      cm->rdmult[i][qindex] = (rdmult > 0) ? rdmult : 1;
+    }
+  }
+#if 0
+  FILE *file = fopen("lambda.txt", "w");
+  fprintf(file, "Key_Frame:\n");
+  for (int qindex = MINQ; qindex <= MAXQ; qindex++) {
+    fprintf(file, "%d\n", cm->rdmult[0][qindex]);
+  }
+  fprintf(file, "GF/ARF_Frame:\n");
+  for (int qindex = MINQ; qindex <= MAXQ; qindex++) {
+    fprintf(file, "%d\n", cm->rdmult[1][qindex]);
+  }
+  fprintf(file, "Inter_Frame:\n");
+  for (int qindex = MINQ; qindex <= MAXQ; qindex++) {
+    fprintf(file, "%d\n", cm->rdmult[2][qindex]);
+  }
+  fclose(file);
+#endif
+  return 0;
+}
+
+int read_rdmult_info(struct AV1_COMP *cpi) {
+  if (cpi->oxcf.rdmult_info_file) {
+    FILE *pfile = fopen(cpi->oxcf.rdmult_info_file, "r");
+    if (pfile == NULL) {
+      printf("Can't find the file: %s\n", cpi->oxcf.rdmult_info_file);
+      return -1;
+    }
+    AV1_COMMON *cm = &cpi->common;
+    char frame_type[256];
+    int idx = 0, lambda;
+    while (EOF != fscanf(pfile, "%s:\n", frame_type)) {
+      if (!strcmp(frame_type, "Key_Frame:")) {
+        idx = 0;
+      } else if (!strcmp(frame_type, "GF/ARF_Frame:")) {
+        idx = 1;
+      } else if (!strcmp(frame_type, "Inter_Frame:")) {
+        idx = 2;
+      }
+      for (int qindex = 0; qindex <= MAXQ; qindex++) {
+        fscanf(pfile, "%d\n", &lambda);
+        // assert(lambda == cm->rdmult[idx][qindex]);
+        cm->rdmult[idx][qindex] = lambda;
+      }
+    }
+    fclose(pfile);
+  }
+  return 0;
 }
 
 int av1_get_deltaq_offset(aom_bit_depth_t bit_depth, int qindex, double beta) {

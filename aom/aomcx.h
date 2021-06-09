@@ -1353,6 +1353,11 @@ enum aome_enc_control_id {
    */
   AV1E_SET_EXTERNAL_PARTITION = 144,
 
+  /*!\brief Codec control to set the file for lambda read and write.
+   * const char * parameter.
+   */
+  AV1E_SET_RDMULT_INFO_FILE = 145,
+
   // Any new encoder control IDs should be added above.
   // Maximum allowed encoder control ID is 229.
   // No encoder control ID should be added below.
@@ -1894,6 +1899,9 @@ AOM_CTRL_USE_TYPE(AV1E_SET_PARTITION_INFO_PATH, const char *)
 
 AOM_CTRL_USE_TYPE(AV1E_SET_EXTERNAL_PARTITION, aom_ext_part_funcs_t *)
 #define AOM_CTRL_AV1E_SET_ENABLE_DNL_DENOISING
+
+AOM_CTRL_USE_TYPE(AV1E_SET_RDMULT_INFO_FILE, const char *)
+#define AOM_CTRL_AV1E_SET_RDMULT_INFO_FILE
 
 /*!\endcond */
 /*! @} - end defgroup aom_encoder */

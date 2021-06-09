@@ -1063,6 +1063,10 @@ typedef struct AV1Common {
 #if CONFIG_LPF_MASK
   int is_decoding;
 #endif  // CONFIG_LPF_MASK
+  /*!
+   * lambda value for Key, GF/ARF, Inter frame
+   */
+  int rdmult[3][QINDEX_RANGE];
 } AV1_COMMON;
 
 /*!\cond */

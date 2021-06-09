@@ -478,6 +478,8 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
 #endif
   .partition_info_path = ARG_DEF(NULL, "partition-info-path", 1,
                                  "Partition information read and write path"),
+  .rdmult_info_file = ARG_DEF(NULL, "rdmult-info-file", 1,
+                              "rdmult information read and write file"),
   .film_grain_test = ARG_DEF(
       NULL, "film-grain-test", 1,
       "Film grain test vectors (0: none (default), 1: test-1  2: test-2, "

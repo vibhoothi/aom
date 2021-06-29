@@ -261,6 +261,8 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
       ARG_DEF(NULL, "alm_k", 1, "Adaptive Lagrangian Multiplier K Value"),
   .alm_step =
       ARG_DEF(NULL, "alm_step", 1, "Adaptive Lagrangian Multipler Step Size"),
+  .alm_step2 =
+      ARG_DEF(NULL, "alm_step2", 1, "Adaptive Lagrangian Multipler Step2 Size"),
   .fwd_kf_enabled =
       ARG_DEF(NULL, "enable-fwd-kf", 1, "Enable forward reference keyframes"),
   .kf_min_dist =

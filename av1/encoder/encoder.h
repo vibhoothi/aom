@@ -537,6 +537,10 @@ typedef struct {
    * Indicates the step size to be used for adaptive lagrangian multiplier
    */
   int adaptive_stepsize;
+  /*!
+   * Indicates the step2 size to be used for adaptive lagrangian multiplier
+   */
+  int adaptive_stepsize2;
 
 } RateControlCfg;
 

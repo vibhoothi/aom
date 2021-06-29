@@ -102,6 +102,7 @@ typedef struct av1_codec_arg_definitions {
   arg_def_t maxsection_pct;
   arg_def_t alm_k;
   arg_def_t alm_step;
+  arg_def_t alm_step2;
   arg_def_t fwd_kf_enabled;
   arg_def_t kf_min_dist;
   arg_def_t kf_max_dist;

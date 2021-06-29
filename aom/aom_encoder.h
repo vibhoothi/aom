@@ -733,10 +733,17 @@ typedef struct aom_codec_enc_cfg {
 
   /*!\brief Adaptive Lagrangian Multiplier Step Size
    *
-   * This value, expressed as 1,2, 3 indicates 0.25 increment towards K
-   * new_k = k + alm_step where 1 is 0.25, 2 is 0.50, 3 is 0.75.
+   * This value, expressed as 1,2, 3 indicates 0.10 increment towards K
+   * new_k = k + alm_step where 1 is 0.10, 2 is 0.20, 3 is 0.30.
    */
   unsigned int alm_stepsize;
+
+  /*!\brief Adaptive Lagrangian Multiplier Step2 Size
+   *
+   * This value, expressed as 1,2, 3 indicates 0.01 increment towards K
+   * new_k = k + alm_step + alm_step2where 1 is 0.01, 2 is 0.02, 3 is 0.03.
+   */
+  unsigned int alm_stepsize2;
 
   /*
    * keyframing settings (kf)
